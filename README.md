@@ -124,6 +124,7 @@ Core packages may include:
 - `FactoMineR`
 - `cluster`
 - `renv`
+- `quarto`
 
 ## License
 
