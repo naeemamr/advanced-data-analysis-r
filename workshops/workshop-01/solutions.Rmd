@@ -1,0 +1,22 @@
+# Workshop 1 Solutions
+
+This file can be used as a worked solution example for the first workshop.
+
+```r
+# Solutions for Workshop 1
+library(tidyverse)
+
+# Example workflow
+# df <- read_csv("data/raw/country_year_data.csv")
+#
+# df_clean <- df %>%
+#   mutate(year = as.integer(year),
+#          gdp_per_capita = as.numeric(gdp_per_capita)) %>%
+#   filter(!is.na(gdp_per_capita)) %>%
+#   group_by(country, year) %>%
+#   summarise(gdp_pc = mean(gdp_per_capita, na.rm = TRUE), .groups = "drop")
+#
+# ggplot(df_clean, aes(x = year, y = gdp_pc, color = country)) +
+#   geom_line() +
+#   theme_minimal()
+```
