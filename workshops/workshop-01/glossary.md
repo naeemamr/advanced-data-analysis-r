@@ -2,7 +2,7 @@
 
 Each term: the scientific word, what it means in everyday language, and where you meet it in the Global Development dataset.
 
-## Data and measurement (Lecture 1)
+## Data and measurement 
 
 | Term | In plain words | In our data |
 |------------------------|------------------------|------------------------|
@@ -33,7 +33,7 @@ Each term: the scientific word, what it means in everyday language, and where yo
 | **MNAR** (missing not at random) | Gaps depend on the missing value itself. | Simulated: the 5 lowest internet figures hidden. Average jumps from 71.8 to 81.0. |
 | **Bias** | An error that always points the same way. | The MNAR average is too high every time. |
 
-## Describing data (Lecture 1, slides 9–11)
+## Describing data
 
 | Term | In plain words | In our data |
 |------------------------|------------------------|------------------------|
