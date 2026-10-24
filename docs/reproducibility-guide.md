@@ -8,12 +8,10 @@ Use the `.Rproj` file in the repository root when working in RStudio. This keeps
 
 ## 2. Use `renv`
 
-Before running workshop code, initialize and restore package versions:
+`renv` records the exact package versions in a file called `renv.lock`.
 
-```r
-renv::init()
-renv::restore()
-```
+- The **instructor**, once, after the packages work: `renv::init()` then `renv::snapshot()`, and commits `renv.lock`.
+- A **student** with a fresh copy that already contains `renv.lock`: `renv::restore()` (do **not** run `renv::init()` first).
 
 To record package versions after installing new packages:
 
@@ -24,7 +22,7 @@ renv::snapshot()
 ## 3. Maintain strict data hygiene
 
 - Always keep raw data in `data/raw/`
-- Store processed data in `data/processed/`
+- Store processed data in `data/processed/workshop-0X/`
 - Use scripts to transform raw data into clean versions
 - Do not overwrite raw files manually
 - Document all cleaning decisions in markdown or comments
@@ -40,13 +38,13 @@ Keep code organized by workflow and workshop:
 
 ## 5. Make analysis rerunnable
 
-Use script files or R Markdown documents that assume all required data are in the repository structure. Prefer relative paths such as:
+Use scripts or Quarto documents that assume all required data are in the repository structure. Build paths with `here()`, which always starts from the folder containing the `.Rproj` file:
 
 ```r
-read_csv("data/raw/country_year_data.csv")
+read_csv(here::here("data", "raw", "global_development_intro.csv"))
 ```
 
-instead of absolute paths.
+Never use absolute paths such as `C:/Users/...`. Plain relative paths such as `"data/raw/..."` also break inside Quarto, because Quarto runs each `.qmd` from that file's own folder.
 
 ## 6. Write reproducible documentation
 
@@ -71,7 +69,7 @@ Commit changes to scripts, data metadata, and documentation regularly. Use clear
 
 ```r
 source("scripts/setup.R")
-readr::read_csv("data/raw/example_data.csv")
+source("workshops/workshop-01/01_clean_data.R")
 ```
 
 The goal is that anyone with the repository and package environment can rerun the workshop analysis from scratch.

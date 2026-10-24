@@ -13,7 +13,7 @@ This repository is designed for advanced data analysis training in R for master'
 
 | Workshop | Title | Core topic | Dataset |
 | --- | --- | --- | --- |
-| 1 | R for Reproducible Data Analysis | Project structure, import, cleaning, reshaping, dates, missing values, descriptive stats, ggplot2, transformations, documentation, reproducible workflow | Gapminder/WDI-style country-year dataset |
+| 1 | R for Reproducible Data Analysis | Project structure, import, cleaning, reshaping, dates, missing values, descriptive stats, ggplot2, transformations, documentation, reproducible workflow | World Bank WDI: 19 countries × 2000–2020 (`data/raw/global_development_intro.csv`) |
 | 2 | Regression Diagnostics & Multivariate Methods in R | OLS diagnostics, robust SEs, VIF, transformations, PCA/EFA workflow, scree/loadings/scores, optional clustering | Country-context dataset; Global Findex; Polish Companies Bankruptcy dataset |
 | 3 | Panel & Time-Series Analysis in R | Panel declaration, pooled/FE/RE, clustered SEs, stationarity tests, ACF/PACF, ARIMA/ARDL, VAR/IRF | WDI/Gapminder panel; IMF/FRED/CBE macro series |
 | 4 | Quantitative Text Analysis in R | quanteda corpus workflow, tokenization, DFM, TF-IDF, dictionary scoring, classifier evaluation, optional topic/embedding demo | BIS central bank speeches subset |
@@ -22,64 +22,65 @@ This repository is designed for advanced data analysis training in R for master'
 
 ```text
 advanced-data-analysis-r/
+├── advanced-data-analysis-r.Rproj   <- double-click this to open the project
 ├── README.md
-├── .gitignore
-├── .Rprofile
 ├── DESCRIPTION
-├── renv.lock.example
+├── .Rprofile
+├── .gitignore
 ├── data/
 │   ├── README.md
-│   ├── raw/
-│   ├── processed/
-│   └── metadata/
+│   ├── raw/                  original data, never edited (committed)
+│   ├── processed/            rebuilt by scripts, one subfolder per workshop (not committed)
+│   └── metadata/             codebooks and data dictionaries, one subfolder per workshop
 ├── docs/
 │   └── reproducibility-guide.md
 ├── scripts/
-│   ├── setup.R
+│   ├── setup.R               installs packages per workshop
 │   └── helpers/
 │       └── project_helpers.R
 ├── workshops/
 │   ├── workshop-01/
-│   │   ├── README.md
-│   │   ├── exercises.Rmd
-│   │   └── solutions.Rmd
+│   │   ├── README.md                   objectives, setup, session plan
+│   │   ├── workshop-01-walkthrough.R   main teaching script
+│   │   ├── 01_clean_data.R             pipeline: raw -> clean
+│   │   ├── report.qmd                  portfolio report (Quarto)
+│   │   ├── exercises.qmd
+│   │   ├── solutions.qmd
+│   │   └── glossary.md
 │   ├── workshop-02/
-│   │   ├── README.md
-│   │   ├── exercises.Rmd
-│   │   └── solutions.Rmd
 │   ├── workshop-03/
-│   │   ├── README.md
-│   │   ├── exercises.Rmd
-│   │   └── solutions.Rmd
 │   └── workshop-04/
-│       ├── README.md
-│       ├── exercises.Rmd
-│       └── solutions.Rmd
-├── outputs/
-│   ├── figures/
-│   ├── tables/
-│   └── reports/
-└── .Rproj.user/
+└── outputs/                  figures, tables, reports (rebuilt by code)
 ```
 
 ## Getting started
 
-1. Open the project in RStudio as an R project.
-2. Install the required R packages:
+1. Install R, RStudio and Quarto (links in `workshops/workshop-01/README.md`).
+2. Double-click `advanced-data-analysis-r.Rproj` to open the project in RStudio.
+3. In the Console, install the packages for the current workshop:
 
 ```r
-source("scripts/setup.R")
+source("scripts/setup.R")   # Workshop 1 packages
+# setup_workshop(2)         # later workshops add their own packages
 ```
 
-3. Use `renv` for package reproducibility:
+4. Build the clean data from the Console:
 
 ```r
-renv::init()
-renv::snapshot()
+source("workshops/workshop-01/01_clean_data.R")
 ```
 
-4. Keep all raw datasets in `data/raw/` and all derived datasets in `data/processed/`.
-5. Write scripts and notebooks that can be rerun from the project root.
+5. Render the Workshop 1 report: open `workshops/workshop-01/report.qmd` in RStudio and click **Render** (blue arrow above the editor). Or, in RStudio's **Terminal** tab (next to Console):
+
+```bash
+quarto render workshops/workshop-01/report.qmd
+```
+
+6. Optional, for exact package versions across machines: `renv::init()` once, then `renv::snapshot()` after installing packages.
+
+## How we write R
+
+All scripts follow one structure and style (the R version of "Pythonic"). Two-page reference: [`docs/r-style-guide.pdf`](docs/r-style-guide.pdf), built from `docs/r-style-guide.qmd`.
 
 ## Reproducibility principles
 

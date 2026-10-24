@@ -27,7 +27,7 @@
 
 ## Dataset
 
-`data/raw/global_development_intro.csv`: 19 countries × 21 years (2000–2020) from the World Bank. Columns: GDP per capita, life expectancy, youth unemployment, internet use, population, region and income group. See `data/README.md` and `data/metadata/`.
+`data/raw/global_development_intro.csv`: 19 countries × 21 years (2000–2020) from the World Bank. Columns: GDP per capita, life expectancy, youth unemployment, internet use, population, region and income group. See `data/README.md` and `data/metadata/workshop-01/`.
 
 ## Before the session (students, about 20 minutes, at home)
 

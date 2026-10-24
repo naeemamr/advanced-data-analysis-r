@@ -16,7 +16,7 @@ execute:
 library(tidyverse)
 library(here)
 source(here("workshops", "workshop-01", "01_clean_data.R"))
-dev <- readRDS(here("data", "processed", "global_development_clean.rds"))
+dev <- readRDS(here("data", "processed", "workshop-01", "global_development_clean.rds"))
 ```
 
 # Project structure and import

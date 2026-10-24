@@ -45,7 +45,7 @@ here("data", "raw", "global_development_intro.csv")
 
 # Our folder rules (look at them in the Files pane, bottom-right):
 #   data/raw/        the original file. We NEVER edit it.
-#   data/processed/  cleaned data, created by code.
+#   data/processed/  cleaned data, created by code (one subfolder per workshop).
 #   outputs/         figures and tables, created by code.
 #   workshops/       the scripts and reports.
 
@@ -93,7 +93,7 @@ range(dev_raw$year)       # 2000 to 2020
 distinct(dev_raw, income)    # 3 income groups, which have a natural order
 distinct(dev_raw, region)    # 7 regions, which have no order
 
-# The codebook (data/metadata/global_development_codebook.pdf) also tells us
+# The codebook (data/metadata/workshop-01/global_development_codebook.pdf) also tells us
 # HOW each number was produced. Read the "Observed / Modelled / Estimated"
 # column. Youth unemployment is a MODELLED estimate by the ILO, not a count.
 #
@@ -445,7 +445,7 @@ ggsave(here("outputs", "figures", "w1_internet_lines.png"), p_lines,
 # ---- 11. Save the clean data and make it reproducible -------------------------
 # The cleaning steps above (sections 5, 6, 9) are collected in ONE short script:
 #   workshops/workshop-01/01_clean_data.R
-# Running it rebuilds data/processed/ from data/raw/ every time.
+# Running it rebuilds data/processed/workshop-01/ from data/raw/ every time.
 source(here("workshops", "workshop-01", "01_clean_data.R"))
 
 # JARGON  : "reproducible"

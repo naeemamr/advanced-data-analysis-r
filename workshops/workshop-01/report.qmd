@@ -27,7 +27,7 @@ library(tidyverse)
 library(here)
 
 # Rebuild the clean data from the raw file if it is not there yet.
-clean_file <- here("data", "processed", "global_development_clean.rds")
+clean_file <- here("data", "processed", "workshop-01", "global_development_clean.rds")
 if (!file.exists(clean_file)) {
   source(here("workshops", "workshop-01", "01_clean_data.R"))
 }
@@ -56,12 +56,12 @@ n_years     <- n_distinct(dev$year)
 - **Unit of analysis:** one country in one year (a *country-year*).
 - **Size:** `r n_countries` countries × `r n_years` years = `r nrow(dev)` rows. Every country has every year (a *balanced panel*).
 - **Raw file:** `data/raw/global_development_intro.csv` (never edited).
-- **Full variable documentation:** `data/metadata/global_development_dictionary.csv`.
+- **Full variable documentation:** `data/metadata/workshop-01/global_development_dictionary.csv`.
 
 ```{r}
 #| label: tbl-variables
 #| tbl-cap: "Variables used in this report"
-read_csv(here("data", "metadata", "global_development_dictionary.csv"),
+read_csv(here("data", "metadata", "workshop-01", "global_development_dictionary.csv"),
          show_col_types = FALSE) |>
   filter(name_after_cleaning %in% c("gdp_per_capita_ppp", "life_expectancy",
                                     "youth_unemployment", "internet_use",

@@ -3,11 +3,11 @@
 #
 # What this script does, in one sentence:
 #   It reads the untouched raw file, applies every cleaning decision as code,
-#   checks the result, and saves a clean copy in data/processed/.
+#   checks the result, and saves a clean copy in data/processed/workshop-01/.
 #
 # Input : data/raw/global_development_intro.csv          (never modified)
-# Output: data/processed/global_development_clean.csv    (rebuilt every run)
-#         data/processed/global_development_clean.rds    (same data, keeps factor order)
+# Output: data/processed/workshop-01/global_development_clean.csv    (rebuilt every run)
+#         data/processed/workshop-01/global_development_clean.rds    (same data, keeps factor order)
 #
 # Run it: open the project (.Rproj), then in the console type
 #   source("workshops/workshop-01/01_clean_data.R")
@@ -87,8 +87,8 @@ stopifnot(
 )
 
 # ---- 4. Save ---------------------------------------------------------------
-dir.create(here("data", "processed"), showWarnings = FALSE, recursive = TRUE)
-write_csv(clean, here("data", "processed", "global_development_clean.csv"))
-saveRDS(clean,   here("data", "processed", "global_development_clean.rds"))
+dir.create(here("data", "processed", "workshop-01"), showWarnings = FALSE, recursive = TRUE)
+write_csv(clean, here("data", "processed", "workshop-01", "global_development_clean.csv"))
+saveRDS(clean,   here("data", "processed", "workshop-01", "global_development_clean.rds"))
 
 message("Clean data saved: ", nrow(clean), " rows x ", ncol(clean), " columns.")

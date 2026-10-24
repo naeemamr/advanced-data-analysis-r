@@ -2,9 +2,14 @@ Package: advanced-data-analysis-r
 Type: Project
 Title: Advanced Data Analysis in R for Econometrics and Data Science
 Version: 0.1.0
-Authors@R: person("Naeem", "Amr", email = "naeem.tawfik@giu-uni.de"
+Authors@R: person("Naeem", "Amr", email = "naeem.tawfik@giu-uni.de", role = c("aut", "cre"))
 Description: Reproducible workshop materials for advanced data analysis in R for master's students.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
+Imports:
+    tidyverse,
+    here,
+    knitr,
+    rmarkdown

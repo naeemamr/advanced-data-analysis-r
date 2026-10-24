@@ -1,40 +1,41 @@
-# .gitignore
-
-# R project files
+# R session files
 .Rproj.user/
 .Rhistory
 .RData
 .Ruserdata
 
-# renv
+# renv: commit renv.lock, never the installed library
 renv/library/
 renv/staging/
 
-# Data outputs
-raw/
-processed/
-*.csv
-*.xlsx
-*.xls
-*.dta
-*.sav
-*.sas7bdat
-*.rds
+# Data
+# Raw data IS committed (small teaching files), so students can clone and run.
+# Processed data is NOT committed: it is rebuilt by the cleaning scripts.
+data/processed/**
+!data/processed/**/
+!data/processed/**/README.md
+!data/processed/.gitkeep
 
-# Output folders
-outputs/
-figures/
-reports/
+# Generated outputs: rebuilt by scripts and Quarto
+outputs/**
+!outputs/**/
+!outputs/**/.gitkeep
+
+# Quarto build artefacts
+/.quarto/
+**/*.quarto_ipynb
+**/*_files/
+workshops/**/*.html
+workshops/**/*.pdf
+workshops/**/*.docx
 
 # OS files
 .DS_Store
 Thumbs.db
 
-# Quarto / notebooks
-*.html
-*.pdf
-*.docx
-
 # Temporary files
 *.tmp
 *.bak
+
+# Created when R draws plots outside RStudio
+Rplots.pdf

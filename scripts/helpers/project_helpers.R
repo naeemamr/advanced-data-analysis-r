@@ -1,25 +1,23 @@
-# Shared helpers for workshop scripts
+# Shared helpers for workshop scripts.
+#
+# All paths are built with here::here(), which always starts from the folder
+# that contains the .Rproj file. This matters because Quarto runs each .qmd
+# from the .qmd's own folder; a plain "data/raw/..." path would break there.
 
 project_root <- function() {
-  normalizePath(".")
+  here::here()
 }
 
 data_path <- function(type = c("raw", "processed", "metadata"), file = NULL) {
   type <- match.arg(type)
-  base <- file.path(project_root(), "data", type)
-  if (!is.null(file)) {
-    file.path(base, file)
-  } else {
-    base
-  }
+  base <- here::here("data", type)
+  if (!dir.exists(base)) dir.create(base, recursive = TRUE, showWarnings = FALSE)
+  if (is.null(file)) base else file.path(base, file)
 }
 
-output_path <- function(folder = "figures", file = NULL) {
-  base <- file.path(project_root(), "outputs", folder)
+output_path <- function(folder = c("figures", "tables", "reports"), file = NULL) {
+  folder <- match.arg(folder)
+  base <- here::here("outputs", folder)
   if (!dir.exists(base)) dir.create(base, recursive = TRUE, showWarnings = FALSE)
-  if (!is.null(file)) {
-    file.path(base, file)
-  } else {
-    base
-  }
+  if (is.null(file)) base else file.path(base, file)
 }
