@@ -49,7 +49,6 @@ If step 6 or 7 fails, bring the exact error message to the session.
 | 0:15–0:35 | 2–3 | Import; unit of analysis; measurement scales; Exercises 1–2 |
 | 0:35–1:00 | 4 | Missing values and the MCAR vs MNAR simulation; Exercise 3 |
 | 1:00–1:20 | 5–6 | Cleaning with the pipe; dates; Exercise 4 |
-| 1:20–1:30 | | Break |
 | 1:30–1:45 | 7 | Long vs wide; Exercise 5 |
 | 1:45–2:15 | 8–9 | Descriptive statistics and transformations; Exercises 6–7 |
 | 2:15–2:45 | 10 | ggplot2; Exercise 8 |
