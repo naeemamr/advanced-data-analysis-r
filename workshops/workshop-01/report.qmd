@@ -75,12 +75,12 @@ read_csv(here("data", "metadata", "workshop-01", "global_development_dictionary.
 
 All cleaning is done in code by `workshops/workshop-01/01_clean_data.R`:
 
-1. Dropped `status`, which was 100% empty.
-2. Renamed `iso3c` to `country_code` to match the codebook.
-3. Turned `last_updated` from text into a date, and added `year_date`.
-4. Stored `income_group` as an **ordered** category (lower middle < upper middle < high).
-5. Added log versions of GDP per capita and population, because both are strongly right-skewed.
-6. Added yearly GDP-per-capita growth, computed within each country.
+1.  Dropped `status`, which was 100% empty.
+2.  Renamed `iso3c` to `country_code` to match the codebook.
+3.  Turned `last_updated` from text into a date, and added `year_date`.
+4.  Stored `income_group` as an **ordered** category (lower middle \< upper middle \< high).
+5.  Added log versions of GDP per capita and population, because both are strongly right-skewed.
+6.  Added yearly GDP-per-capita growth, computed within each country.
 
 Apart from the first year of growth (which has no previous year), there are **no missing values**.
 
@@ -159,9 +159,9 @@ r_log <- with(dev_2020, cor(log_gdp_per_capita, life_expectancy))
 top_youth <- slice_max(dev_2020, youth_unemployment, n = 1)
 ```
 
-1. **Income and health move together.** In 2020 the correlation between log GDP per capita and life expectancy is `r round(r_log, 2)` (@fig-scatter). Nigeria and South Africa live notably shorter lives than their income would suggest.
-2. **Internet use spread fast, but unevenly.** Every country rose, but the gap between leaders and laggards was still large in 2020 (@fig-internet).
-3. **Youth unemployment does not follow income neatly.** The highest value in 2020 is `r top_youth$country_short` at `r round(top_youth$youth_unemployment, 1)`% (@fig-youth).
+1.  **Income and health move together.** In 2020 the correlation between log GDP per capita and life expectancy is `r round(r_log, 2)` (@fig-scatter). Nigeria and South Africa live notably shorter lives than their income would suggest.
+2.  **Internet use spread fast, but unevenly.** Every country rose, but the gap between leaders and laggards was still large in 2020 (@fig-internet).
+3.  **Youth unemployment does not follow income neatly.** The highest value in 2020 is `r top_youth$country_short` at `r round(top_youth$youth_unemployment, 1)`% (@fig-youth).
 
 # Limitations
 
@@ -175,9 +175,9 @@ top_youth <- slice_max(dev_2020, youth_unemployment, n = 1)
 
 Rebuild this report from a fresh copy of the repository:
 
-1. Open `advanced-data-analysis-r.Rproj` in RStudio.
-2. Run `source("scripts/setup.R")` once to install packages.
-3. Open this file and click **Render**.
+1.  Open `advanced-data-analysis-r.Rproj` in RStudio.
+2.  Run `source("scripts/setup.R")` once to install packages.
+3.  Open this file and click **Render**.
 
 The report rebuilds the clean data from the raw file if needed. Software versions used:
 
