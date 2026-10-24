@@ -1,0 +1,212 @@
+---
+title: "Workshop 1 — Solutions"
+subtitle: "R for Reproducible Data Analysis"
+format:
+  html:
+    toc: true
+    number-sections: true
+    embed-resources: true
+execute:
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+library(tidyverse)
+library(here)
+source(here("workshops", "workshop-01", "01_clean_data.R"))
+dev <- readRDS(here("data", "processed", "global_development_clean.rds"))
+```
+
+# Project structure and import
+
+**1.1**
+
+```{r}
+raw <- read_csv(here("data", "raw", "global_development_intro.csv"))
+```
+
+**1.2**
+
+```{r}
+dim(raw)
+```
+
+**1.3** One row is one country in one year. Each of the 19 countries is observed in each of the 21 years 2000–2020, so 19 × 21 = 399 rows. This is panel data.
+
+# Measurement scales
+
+**2.1** `region` is nominal (names, no order). `income_group` is ordinal (ordered categories with unequal gaps). `year` is interval (equal one-year steps, no true zero). `internet_use` is ratio (0% really means nobody).
+
+**2.2**
+
+```{r}
+levels(dev$income_group)
+```
+
+**2.3** The numbers 1–7 are only labels. Their average has no meaning: there is no "region 3.4". For a nominal variable, report counts or shares instead.
+
+# Missing values
+
+**3.1**
+
+```{r}
+colSums(is.na(raw))
+```
+
+**3.2**
+
+```{r}
+dev |> filter(is.na(gdp_growth_pct)) |> count(year)
+```
+
+**3.3** Growth compares a year with the year before. In 2000, the first year, there is no year before, so growth cannot be computed. These NAs are correct and expected, not a data problem.
+
+**3.4** Too **high**. The countries that drop out are the ones with the lowest values, so the remaining average is pulled up. This is **missing not at random (MNAR)**: whether a value is missing depends on the value itself. It creates bias, and a bigger sample does not fix it.
+
+# Cleaning and dates
+
+**4.1**
+
+```{r}
+north_africa <- dev |>
+  filter(country_short %in% c("Egypt", "Morocco", "Tunisia")) |>
+  select(country_short, year, youth_unemployment)
+north_africa
+```
+
+**4.2**
+
+```{r}
+start <- ymd("2000-01-01")
+end   <- ymd("2020-12-31")
+end - start
+```
+
+# Reshaping
+
+**5.1**
+
+```{r}
+north_africa |>
+  pivot_wider(names_from = year, values_from = youth_unemployment)
+```
+
+**5.2** `ggplot()` needs **long** data: one column for the x-axis (year), one for the y-axis (value), one for the colour (country). The wide table is easier for humans to read and compare across years, which makes it a good format for a report table.
+
+# Descriptive statistics
+
+**6.1 and 6.2**
+
+```{r}
+dev |>
+  filter(year %in% c(2000, 2020)) |>
+  group_by(year) |>
+  summarise(mean_internet = mean(internet_use),
+            median_internet = median(internet_use))
+```
+
+**6.3** In 2000 most countries were near 0% and a few rich ones were far higher: a long **right** tail pulled the mean (9.8) far above the median (2.8). By 2020 most countries had caught up, and the leaders could not go above 100%. The values bunched near the top with a tail on the **left**, and the mean and median became almost equal. The skewness changes sign, from about +1.4 to about −1.0:
+
+```{r}
+skewness <- function(x) mean(((x - mean(x)) / sd(x))^3)
+dev |>
+  filter(year %in% c(2000, 2020)) |>
+  group_by(year) |>
+  summarise(skew_internet = skewness(internet_use))
+```
+
+**6.4**
+
+```{r}
+dev |>
+  filter(year == 2020) |>
+  group_by(region) |>
+  summarise(median_life = median(life_expectancy)) |>
+  arrange(desc(median_life))
+```
+
+**6.5** The **standard deviation** says how much individual countries differ from each other. The **standard error** says how much an *average* would change if we drew a different random sample. The SE gets smaller as the sample gets bigger; the SD does not.
+
+# Transformations
+
+**7.1**
+
+```{r}
+dev_z <- dev |>
+  group_by(year) |>
+  mutate(youth_z = (youth_unemployment - mean(youth_unemployment)) / sd(youth_unemployment)) |>
+  ungroup()
+
+dev_z |> filter(year == 2020) |> arrange(desc(youth_z)) |> select(country_short, youth_z)
+```
+
+**7.2** In 2020, South Africa's youth unemployment is far above the average of the 19 countries. It is almost three times the usual gap between a country and that average. In other words, it is an extreme case even in this group.
+
+**7.3**
+
+```{r}
+dev |>
+  filter(year == 2020) |>
+  summarise(r_raw = cor(gdp_per_capita_ppp, life_expectancy),
+            r_log = cor(log_gdp_per_capita, life_expectancy))
+```
+
+**7.4** Correlation measures how close points are to a **straight line**. Life expectancy rises fast as income grows from low levels, then flattens. On the raw dollar scale that is a curve; on the log scale it becomes close to a straight line, so the correlation is higher.
+
+# Visualisation
+
+**8.1**
+
+```{r}
+p_na <- ggplot(north_africa, aes(x = year, y = youth_unemployment, colour = country_short)) +
+  geom_line(linewidth = 1) +
+  labs(title = "Youth unemployment in North Africa, 2000-2020",
+       x = NULL, y = "Youth unemployment (%)", colour = NULL) +
+  theme_minimal()
+p_na
+```
+
+**8.2**
+
+```{r}
+#| layout-ncol: 2
+life_2020 <- filter(dev, year == 2020)
+ggplot(life_2020, aes(x = life_expectancy)) +
+  geom_histogram(bins = 6, fill = "steelblue", colour = "white") +
+  labs(title = "bins = 6") + theme_minimal()
+ggplot(life_2020, aes(x = life_expectancy)) +
+  geom_histogram(bins = 12, fill = "steelblue", colour = "white") +
+  labs(title = "bins = 12") + theme_minimal()
+```
+
+With 6 bins the shape looks smooth and simple. With 12 bins and only 19 countries, many bins hold 0 or 1 country and the shape looks jagged. The data did not change; only the picture did. Always try more than one bin count.
+
+**8.3**
+
+```{r}
+ggsave(here("outputs", "figures", "w1_north_africa_youth.png"), p_na,
+       width = 8, height = 5, dpi = 300, bg = "white")
+```
+
+# Reproducibility
+
+**9.1** Answers vary. Common problems: a package not loaded at the top of the file, an object created in the Console but not in the file, or a path typed as `C:/Users/...` instead of with `here()`.
+
+**9.2** Examples: editing the raw CSV by hand; saving a figure with right-click instead of `ggsave()`; using an absolute path; creating objects in the Console that the file depends on; not recording package versions (`renv`).
+
+# Extension
+
+**10.1** Replace `geom_text(...)` with `ggrepel::geom_text_repel(aes(label = country_short), size = 3)`. It moves labels so they do not overlap.
+
+**10.2**
+
+```{r}
+dev |>
+  filter(year %in% c(2000, 2020)) |>
+  select(country_short, year, youth_unemployment) |>
+  pivot_wider(names_from = year, values_from = youth_unemployment, names_prefix = "y") |>
+  mutate(change = y2020 - y2000) |>
+  arrange(change)
+```

@@ -1,0 +1,188 @@
+---
+title: "Development Indicators in 19 Countries, 2000–2020"
+subtitle: "Workshop 1 portfolio report: a reproducible descriptive analysis"
+author: "Your Name"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    number-sections: true
+    code-fold: true
+    code-summary: "Show the code"
+    embed-resources: true
+    theme: cosmo
+    fig-width: 8
+    fig-height: 5
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(here)
+
+# Rebuild the clean data from the raw file if it is not there yet.
+clean_file <- here("data", "processed", "global_development_clean.rds")
+if (!file.exists(clean_file)) {
+  source(here("workshops", "workshop-01", "01_clean_data.R"))
+}
+dev <- readRDS(clean_file)
+dev_2020 <- filter(dev, year == 2020)
+
+theme_set(theme_minimal(base_size = 12))
+skewness <- function(x) mean(((x - mean(x)) / sd(x))^3)
+```
+
+# Question
+
+How did income, health, youth unemployment and internet use differ across a selected group of 19 countries between 2000 and 2020, and how are income and health related?
+
+This is a **descriptive** report. It shows patterns; it does not claim that one variable causes another.
+
+# Data
+
+```{r}
+#| label: data-overview
+n_countries <- n_distinct(dev$country)
+n_years     <- n_distinct(dev$year)
+```
+
+- **Source:** World Bank World Development Indicators, last updated `r format(max(dev$last_updated), "%d %B %Y")`.
+- **Unit of analysis:** one country in one year (a *country-year*).
+- **Size:** `r n_countries` countries × `r n_years` years = `r nrow(dev)` rows. Every country has every year (a *balanced panel*).
+- **Raw file:** `data/raw/global_development_intro.csv` (never edited).
+- **Full variable documentation:** `data/metadata/global_development_dictionary.csv`.
+
+```{r}
+#| label: tbl-variables
+#| tbl-cap: "Variables used in this report"
+read_csv(here("data", "metadata", "global_development_dictionary.csv"),
+         show_col_types = FALSE) |>
+  filter(name_after_cleaning %in% c("gdp_per_capita_ppp", "life_expectancy",
+                                    "youth_unemployment", "internet_use",
+                                    "population", "income_group")) |>
+  select(Variable = name_after_cleaning, Unit = unit,
+         Scale = measurement_scale, Note = cleaning_note) |>
+  knitr::kable()
+```
+
+## Cleaning decisions
+
+All cleaning is done in code by `workshops/workshop-01/01_clean_data.R`:
+
+1. Dropped `status`, which was 100% empty.
+2. Renamed `iso3c` to `country_code` to match the codebook.
+3. Turned `last_updated` from text into a date, and added `year_date`.
+4. Stored `income_group` as an **ordered** category (lower middle < upper middle < high).
+5. Added log versions of GDP per capita and population, because both are strongly right-skewed.
+6. Added yearly GDP-per-capita growth, computed within each country.
+
+Apart from the first year of growth (which has no previous year), there are **no missing values**.
+
+# Descriptive statistics
+
+```{r}
+#| label: tbl-summary
+#| tbl-cap: "Summary statistics across the 19 countries, 2020"
+dev_2020 |>
+  select(`GDP per capita (PPP $)` = gdp_per_capita_ppp,
+         `Life expectancy (years)` = life_expectancy,
+         `Youth unemployment (%)`  = youth_unemployment,
+         `Internet use (%)`        = internet_use) |>
+  pivot_longer(everything(), names_to = "Indicator") |>
+  group_by(Indicator) |>
+  summarise(Mean = mean(value), Median = median(value), SD = sd(value),
+            Min = min(value), Max = max(value), Skewness = skewness(value)) |>
+  knitr::kable(digits = 1, format.args = list(big.mark = ","))
+```
+
+```{r}
+#| label: tbl-income
+#| tbl-cap: "Medians by World Bank income group, 2020"
+dev_2020 |>
+  group_by(`Income group` = income_group) |>
+  summarise(Countries = n(),
+            `GDP per capita` = median(gdp_per_capita_ppp),
+            `Life expectancy` = median(life_expectancy),
+            `Youth unemployment` = median(youth_unemployment),
+            `Internet use` = median(internet_use)) |>
+  knitr::kable(digits = 1, format.args = list(big.mark = ","))
+```
+
+**Reading the tables.** GDP per capita has a mean above its median, a sign of a long right tail: a few rich countries pull the mean up. Medians are therefore used for the group comparison.
+
+# Figures
+
+```{r}
+#| label: fig-scatter
+#| fig-cap: "GDP per capita and life expectancy, 2020. X axis on a log scale; point size shows population."
+ggplot(dev_2020, aes(gdp_per_capita_ppp, life_expectancy)) +
+  geom_point(aes(colour = income_group, size = population), alpha = 0.8) +
+  geom_text(aes(label = country_short), size = 3, vjust = -1.2) +
+  scale_x_log10(labels = scales::label_dollar(accuracy = 1),
+                expand = expansion(mult = 0.08)) +
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.12))) +
+  scale_size_area(max_size = 12, guide = "none") +
+  labs(x = "GDP per capita, PPP (log scale)", y = "Life expectancy (years)",
+       colour = "Income group")
+```
+
+```{r}
+#| label: fig-internet
+#| fig-cap: "Internet users as a share of the population, 2000–2020. Each grey line is one country."
+ggplot(dev, aes(year_date, internet_use, group = country_short)) +
+  geom_line(colour = "grey70") +
+  geom_line(data = filter(dev, country_short %in% c("Egypt", "Nigeria", "South Korea")),
+            aes(colour = country_short), linewidth = 1.2) +
+  labs(x = NULL, y = "Internet users (% of population)", colour = NULL)
+```
+
+```{r}
+#| label: fig-youth
+#| fig-cap: "Youth unemployment by income group, all years 2000–2020."
+ggplot(dev, aes(income_group, youth_unemployment)) +
+  geom_boxplot(fill = "grey90", outlier.shape = NA) +
+  geom_jitter(width = 0.15, alpha = 0.3, size = 1) +
+  labs(x = NULL, y = "Youth unemployment (% of youth labour force)")
+```
+
+# Findings
+
+```{r}
+#| label: findings
+r_log <- with(dev_2020, cor(log_gdp_per_capita, life_expectancy))
+top_youth <- slice_max(dev_2020, youth_unemployment, n = 1)
+```
+
+1. **Income and health move together.** In 2020 the correlation between log GDP per capita and life expectancy is `r round(r_log, 2)` (@fig-scatter). Nigeria and South Africa live notably shorter lives than their income would suggest.
+2. **Internet use spread fast, but unevenly.** Every country rose, but the gap between leaders and laggards was still large in 2020 (@fig-internet).
+3. **Youth unemployment does not follow income neatly.** The highest value in 2020 is `r top_youth$country_short` at `r round(top_youth$youth_unemployment, 1)`% (@fig-youth).
+
+# Limitations
+
+- **Not a random sample.** The 19 countries were chosen, so these results describe these countries only, not the world (Lecture 1, *sampling frame*).
+- **Association is not causation.** Richer countries differ from poorer ones in many ways at once (health systems, education, water), so the income–health link in @fig-scatter is not a causal effect.
+- **Measured, modelled, estimated.** Youth unemployment is an ILO *modelled* estimate and excludes informal workers; life expectancy is *estimated* where civil registration is weak.
+- **Income group is today's classification.** It is repeated for every year, so it does not show countries that changed group since 2000.
+- **Repeated observations.** Figure 3 pools all years, so each country appears 21 times; the boxes overstate how much independent information there is.
+
+# Reproducibility
+
+Rebuild this report from a fresh copy of the repository:
+
+1. Open `advanced-data-analysis-r.Rproj` in RStudio.
+2. Run `source("scripts/setup.R")` once to install packages.
+3. Open this file and click **Render**.
+
+The report rebuilds the clean data from the raw file if needed. Software versions used:
+
+```{r}
+#| label: session
+#| code-fold: false
+sessionInfo()
+```

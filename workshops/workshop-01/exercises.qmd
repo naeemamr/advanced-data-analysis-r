@@ -1,0 +1,199 @@
+---
+title: "Workshop 1 — Exercises"
+subtitle: "R for Reproducible Data Analysis"
+author: "Your Name"
+format:
+  html:
+    toc: true
+    number-sections: true
+    embed-resources: true
+execute:
+  eval: false        # blanks (___) would stop rendering; set to true once filled in
+  warning: false
+  message: false
+---
+
+## How to work on these exercises
+
+- Replace every `___` with your answer, then run the chunk with the green ▶ button at the chunk's top-right.
+- Questions marked ✍️ need a written answer of 1–3 sentences. Write it below the question.
+- When all blanks are filled, change `eval: false` to `eval: true` at the top and click **Render**. If it renders, your work is reproducible.
+- Solutions are in `solutions.qmd`. Try first.
+
+```{r}
+#| label: setup
+library(tidyverse)
+library(here)
+source(here("workshops", "workshop-01", "01_clean_data.R"))   # builds `clean`
+dev <- readRDS(here("data", "processed", "global_development_clean.rds"))
+```
+
+# Project structure and import
+
+**1.1** Import the **raw** file into an object called `raw`, using `here()` to build the path.
+
+```{r}
+raw <- read_csv(here("data", "raw", ___))
+```
+
+**1.2** How many rows and columns does `raw` have? Use one function.
+
+```{r}
+___(raw)
+```
+
+**1.3** ✍️ What is the unit of analysis? Why do 19 countries give 399 rows?
+
+# Measurement scales
+
+**2.1** ✍️ Give the measurement scale (nominal, ordinal, interval or ratio) of: `region`, `income_group`, `year`, `internet_use`.
+
+**2.2** Show that R knows the order of `income_group` (hint: the function lists the categories).
+
+```{r}
+___(dev$income_group)
+```
+
+**2.3** ✍️ Someone codes regions as 1–7 and reports "the average region is 3.4". What is wrong?
+
+# Missing values
+
+**3.1** Count missing values in every column of `raw`.
+
+```{r}
+colSums(___(raw))
+```
+
+**3.2** `dev` has exactly 19 missing values, all in `gdp_growth_pct`. Show which year they are in.
+
+```{r}
+dev |> filter(is.na(___)) |> count(year)
+```
+
+**3.3** ✍️ Why are those 19 values missing, and is that a problem?
+
+**3.4** ✍️ A colleague drops every country with a missing internet figure before computing the average. Missing figures come mostly from the poorest countries. Will the average be too high, too low, or fine? What is this kind of missingness called?
+
+# Cleaning and dates
+
+**4.1** Keep only the North African countries (Egypt, Morocco, Tunisia) and the columns `country_short`, `year`, `youth_unemployment`.
+
+```{r}
+north_africa <- dev |>
+  filter(country_short %in% c(___, ___, ___)) |>
+  select(___, ___, ___)
+north_africa
+```
+
+**4.2** Convert this text into a date and find how many days lie between the two dates.
+
+```{r}
+start <- ymd(___)          # "2000-01-01"
+end   <- ymd("2020-12-31")
+end - ___
+```
+
+# Reshaping
+
+**5.1** Make a **wide** table: one row per North African country, one column per year, values = youth unemployment.
+
+```{r}
+north_africa |>
+  pivot_wider(names_from = ___, values_from = ___)
+```
+
+**5.2** ✍️ Which format (long or wide) does `ggplot()` need, and why is the wide one still useful?
+
+# Descriptive statistics
+
+**6.1** For 2020, compute the mean and median of internet use.
+
+```{r}
+dev |>
+  filter(year == ___) |>
+  summarise(mean_internet = ___(internet_use),
+            median_internet = ___(internet_use))
+```
+
+**6.2** Do the same for the year **2000**.
+
+```{r}
+# your code here
+```
+
+**6.3** ✍️ In 2000 the mean is much larger than the median; in 2020 they are almost equal. What happened to the *shape* of the distribution? (Hint: internet use cannot go above 100%.)
+
+**6.4** For 2020, compute median life expectancy **by region**, sorted from highest to lowest.
+
+```{r}
+dev |>
+  filter(year == 2020) |>
+  group_by(___) |>
+  summarise(median_life = median(___)) |>
+  arrange(desc(___))
+```
+
+**6.5** ✍️ In your own words: what is the difference between a standard deviation and a standard error?
+
+# Transformations
+
+**7.1** Add a column with the z-score of youth unemployment **within each year**.
+
+```{r}
+dev_z <- dev |>
+  group_by(___) |>
+  mutate(youth_z = (youth_unemployment - mean(youth_unemployment)) / ___(youth_unemployment)) |>
+  ungroup()
+
+dev_z |> filter(year == 2020) |> arrange(desc(youth_z)) |> select(country_short, youth_z)
+```
+
+**7.2** ✍️ South Africa has a z-score of about +2.7 in 2020. Explain that number to someone who has never studied statistics.
+
+**7.3** Compare the correlation between life expectancy and GDP per capita in 2020, first with raw GDP, then with **log** GDP.
+
+```{r}
+dev |>
+  filter(year == 2020) |>
+  summarise(r_raw = cor(gdp_per_capita_ppp, life_expectancy),
+            r_log = cor(___, life_expectancy))
+```
+
+**7.4** ✍️ Why is the log version higher?
+
+# Visualisation
+
+**8.1** Draw a line chart of youth unemployment over time for the North African countries, one colour per country.
+
+```{r}
+ggplot(north_africa, aes(x = ___, y = ___, colour = ___)) +
+  geom_line(linewidth = 1) +
+  labs(title = ___, x = NULL, y = "Youth unemployment (%)", colour = NULL)
+```
+
+**8.2** Draw a histogram of life expectancy in 2020. Try `bins = 6` and `bins = 12`. ✍️ How does the choice of bins change what you see?
+
+```{r}
+dev |>
+  filter(year == 2020) |>
+  ggplot(aes(x = ___)) +
+  geom_histogram(bins = ___, fill = "steelblue", colour = "white")
+```
+
+**8.3** Save your chart from 8.1 to `outputs/figures/` with a white background.
+
+```{r}
+ggsave(here("outputs", "figures", ___), width = 8, height = 5, dpi = 300, bg = ___)
+```
+
+# Reproducibility
+
+**9.1** Restart R (*Session → Restart R*), then render this file. ✍️ Did it work the first time? If not, what did you have to fix?
+
+**9.2** ✍️ Name two things in this project that would stop a classmate from reproducing your results if you did them, e.g. "editing the raw CSV in Excel".
+
+# Extension (optional)
+
+**10.1** Some labels overlap in the scatter plot of the walkthrough. Install the `ggrepel` package and replace `geom_text()` with `ggrepel::geom_text_repel()`.
+
+**10.2** Find the country with the biggest **fall** in youth unemployment between 2000 and 2020. (Hint: `pivot_wider` on years 2000 and 2020, then subtract.)
