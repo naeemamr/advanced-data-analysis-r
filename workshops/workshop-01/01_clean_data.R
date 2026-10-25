@@ -1,5 +1,5 @@
 # =============================================================================
-# Workshop 1 - Pipeline step 1: clean the raw data
+# Workshop 1 - Pipeline step 1: cleaning
 #
 # What this script does, in one sentence:
 #   It reads the untouched raw file, applies every cleaning decision as code,
