@@ -36,7 +36,7 @@ Keep code organized by workflow and workshop:
 - `outputs/` for generated figures, tables, and reports
 - `docs/` for course notes and methodological explanations
 
-## 5. Make analysis rerunnable
+## 5. Make analysis re-runnable
 
 Use scripts or Quarto documents that assume all required data are in the repository structure. Build paths with `here()`, which always starts from the folder containing the `.Rproj` file:
 

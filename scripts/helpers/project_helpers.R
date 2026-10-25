@@ -3,6 +3,7 @@
 # All paths are built with here::here(), which always starts from the folder
 # that contains the .Rproj file. This matters because Quarto runs each .qmd
 # from the .qmd's own folder; a plain "data/raw/..." path would break there.
+# it's useful trust me
 
 project_root <- function() {
   here::here()

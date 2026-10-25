@@ -12,4 +12,5 @@ Imports:
     tidyverse,
     here,
     knitr,
-    rmarkdown
+    rmarkdown,
+    quarto

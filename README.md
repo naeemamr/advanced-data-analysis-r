@@ -127,10 +127,8 @@ Core packages may include:
 - `renv`
 - `quarto`
 
-## License
 
-This project is licensed under the MIT License.
 
 ## Contact
 
-For course materials or repository updates, please use this repository's issue tracker or maintain the workshop notes directly in the project.
+My work email is "naeem.tawfik@giu-uni.de"

@@ -7,7 +7,7 @@
 #   setup_workshop(2)                  # later: adds Workshop 2 packages
 #
 # Why per-workshop lists? Installing 20 packages on day one is the most common
-# reason beginners give up. Workshop 1 needs only two.
+# reason beginners give up. Workshop 1 needs only 2
 # =============================================================================
 
 workshop_packages <- list(

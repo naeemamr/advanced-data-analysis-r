@@ -11,7 +11,7 @@ data/
 
 Each workshop gets its own subfolder inside `processed/` and `metadata/`.
 
-**Rule:** nothing in `raw/` is ever changed. If something needs fixing, the fix is written as code in a cleaning script, so anyone can see and repeat it.
+**VI Rule:** nothing in `raw/` is ever changed. If something needs fixing, the fix is written as code in a cleaning script, so anyone can see and repeat it.
 
 ## Datasets
 
