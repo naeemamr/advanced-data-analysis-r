@@ -38,7 +38,7 @@ theme_set(theme_minimal(base_size = 12))
 skewness <- function(x) mean(((x - mean(x)) / sd(x))^3)
 ```
 
-# Question
+x# Question
 
 How did income, health, youth unemployment and internet use differ across a selected group of 19 countries between 2000 and 2020, and how are income and health related?
 
